@@ -6,17 +6,18 @@ from utils import cors_configuration, create_and_store_entity, FormData
 
 app = FastAPI()
 
-origins = [
-  'https://proyecto-inicial-frontend-agk6kyxhfa-no.a.run.app/',
-]
+# Not working
+# origins = [
+#   'https://proyecto-inicial-frontend-agk6kyxhfa-no.a.run.app/',
+# ]
 
 app.add_middleware(
   CORSMiddleware,
-  # allow_origins=['*'],
-  allow_origins=origins,
+  allow_origins=['*'],
+  # allow_origins=origins,
   allow_credentials=True,
   allow_methods=["*"],
-  # allow_headers=["*"],
+  allow_headers=["*"],
 )
 
 
