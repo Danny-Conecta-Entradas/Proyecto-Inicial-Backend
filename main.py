@@ -26,7 +26,7 @@ class FormData(BaseModel):
   string_qr: str
 
 
-@app.post('/api/send-data')
+@app.post('/api/send-data/')
 def send_data(item: FormData):
   create_and_store_entity(item)
 
