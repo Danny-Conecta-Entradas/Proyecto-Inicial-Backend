@@ -25,7 +25,7 @@ def create_and_store_entity(form_data: FormData):
   return form_data
 
 
-def cors_configuration(bucket_name):
+def cors_configuration(bucket_name: str):
   """Set a bucket's CORS policies configuration."""
 
   storage_client = storage.Client()
