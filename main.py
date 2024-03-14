@@ -27,4 +27,10 @@ cors_configuration(bucket_name)
 def send_data(item: FormData):
   create_and_store_entity(item)
 
-  return item
+  response = {
+    'headers': {
+      'Access-Control-Allow-Origin': '*'
+    }
+  }
+
+  return response
