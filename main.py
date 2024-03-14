@@ -1,9 +1,21 @@
 from fastapi import FastAPI
 from google.cloud import datastore
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+origins = [
+  'https://proyecto-inicial-agk6kyxhfa-no.a.run.app/',
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    # allow_credentials=True,
+    # allow_methods=["*"],
+    # allow_headers=["*"],
+)
 
 database_name = 'registro'
 datastore_client = datastore.Client(database = database_name)
