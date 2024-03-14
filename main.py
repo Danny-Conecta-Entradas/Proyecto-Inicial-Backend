@@ -6,7 +6,7 @@ from utils import cors_configuration, create_and_store_entity, FormData
 app = FastAPI()
 
 origins = [
-  'https://proyecto-inicial-agk6kyxhfa-no.a.run.app/',
+  'https://proyecto-inicial-backend-agk6kyxhfa-uc.a.run.app',
 ]
 
 app.add_middleware(
