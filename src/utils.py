@@ -3,7 +3,7 @@ from google.cloud import storage
 from google.cloud import datastore
 
 class FormData(BaseModel):
-  timestamp: str
+  timestamp: int
   string_qr: str
 
 
