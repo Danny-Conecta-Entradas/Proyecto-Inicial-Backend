@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
-from utils import cors_configuration, create_and_store_entity, FormData
+from src.utils import cors_configuration, create_and_store_entity, FormData
 
 
 app = FastAPI()
