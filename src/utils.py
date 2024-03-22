@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from google.cloud import storage
 from google.cloud import datastore
 
-class FormData(BaseModel):
+class APIModel(BaseModel):
   timestamp: int
   name: str
   dni: str
@@ -12,8 +12,8 @@ class FormData(BaseModel):
 database_name = 'registro'
 datastore_client = datastore.Client(database = database_name)
 
-def create_and_store_entity(form_data: FormData):
-  kind = FormData.__name__
+def create_and_store_entity(form_data: APIModel):
+  kind = APIModel.__name__
   form_key = datastore_client.key(kind)
 
   form_entity = datastore.Entity(key = form_key)
@@ -25,8 +25,8 @@ def create_and_store_entity(form_data: FormData):
 
 
 def get_all_entities():
-  query = datastore_client.query(kind = FormData.__name__)
-  result: list[FormData] = list(query.fetch())
+  query = datastore_client.query(kind = APIModel.__name__)
+  result: list[APIModel] = list(query.fetch())
 
   return result
 

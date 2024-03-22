@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.utils import cors_configuration, FormData, create_and_store_entity, get_all_entities
+from src.utils import cors_configuration, APIModel, create_and_store_entity, get_all_entities
 
 
 app = FastAPI()
@@ -25,7 +25,7 @@ cors_configuration(bucket_name)
 
 
 @app.post('/api/send-data/')
-def send_data(item: FormData):
+def send_data(item: APIModel):
   create_and_store_entity(item)
 
   return item
