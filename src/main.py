@@ -1,7 +1,6 @@
 from fastapi import FastAPI
-from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
-from src.utils import cors_configuration, create_and_store_entity, FormData
+from src.utils import cors_configuration, FormData, create_and_store_entity, get_all_entities
 
 
 app = FastAPI()
@@ -16,8 +15,8 @@ app.add_middleware(
   allow_origins=['*'],
   # allow_origins=origins,
   allow_credentials=True,
-  allow_methods=["*"],
-  allow_headers=["*"],
+  allow_methods=['*'],
+  allow_headers=['*'],
 )
 
 
@@ -30,3 +29,9 @@ def send_data(item: FormData):
   create_and_store_entity(item)
 
   return item
+
+@app.get('/api/get-all-data/')
+def get_all_data():
+  result = get_all_entities()
+
+  return result

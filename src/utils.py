@@ -4,7 +4,9 @@ from google.cloud import datastore
 
 class FormData(BaseModel):
   timestamp: int
-  string_qr: str
+  name: str
+  dni: str
+  birth_date: int
 
 
 database_name = 'registro'
@@ -15,14 +17,18 @@ def create_and_store_entity(form_data: FormData):
   form_key = datastore_client.key(kind)
 
   form_entity = datastore.Entity(key = form_key)
-  form_entity.update({
-    'timestamp': form_data.timestamp,
-    'string_qr': form_data.string_qr,
-  })
+  form_entity.update(form_data)
 
   datastore_client.put(form_entity)
 
   return form_data
+
+
+def get_all_entities():
+  query = datastore_client.query(kind = FormData.__name__)
+  result: list[FormData] = list(query.fetch())
+
+  return result
 
 
 def cors_configuration(bucket_name: str):
