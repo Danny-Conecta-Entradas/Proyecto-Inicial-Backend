@@ -3,10 +3,10 @@ from google.cloud import storage
 from google.cloud import datastore
 
 class APIModel(BaseModel):
-  timestamp: int
+  creation_date: str
   name: str
   dni: str
-  birth_date: int
+  birth_date: str
 
 
 database_name = 'registro'
