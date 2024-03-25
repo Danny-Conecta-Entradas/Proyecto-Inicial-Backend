@@ -32,7 +32,7 @@ def send_data(item: APIModel):
 
 @app.get('/api/get-all-data/')
 def get_all_data(filter: str | None = None):
-  result = get_all_entities()
+  result = get_all_entities(filter)
 
   return result
 
