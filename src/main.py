@@ -31,7 +31,12 @@ def send_data(item: APIModel):
   return item
 
 @app.get('/api/get-all-data/')
-def get_all_data():
+def get_all_data(filter: str | None = None):
   result = get_all_entities()
 
   return result
+
+# @app.post('/api/edit-data/')
+# def edit_data(updatedItem: APIModel):
+#   update_entity()
+#   return
