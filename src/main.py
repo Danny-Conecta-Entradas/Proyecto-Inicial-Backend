@@ -1,6 +1,7 @@
 from fastapi import FastAPI
+from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
-from src.utils import cors_configuration, APIModel, create_and_store_entity, get_all_entities
+from src.utils import cors_configuration, APIModel, create_and_store_entity, get_all_entities, update_entity
 
 
 app = FastAPI()
@@ -36,7 +37,7 @@ def get_all_data(filter: str | None = None):
 
   return result
 
-# @app.post('/api/edit-data/')
-# def edit_data(updatedItem: APIModel):
-#   update_entity()
-#   return
+@app.post('/api/edit-data/{entity_key}', response_class = Response)
+def edit_data(entity_key: int, updatedItem: APIModel):
+  update_entity(entity_key, updatedItem)
+  return

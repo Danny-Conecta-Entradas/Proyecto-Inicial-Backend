@@ -38,6 +38,15 @@ def get_all_entities(filterValue: str | None = None):
 
   return entities
 
+def update_entity(key: int, updatedItem: APIModel):
+  with datastore_client.transaction():
+    entity_key = datastore_client.key(APIModel.__name__, key)
+    entity = datastore_client.get(entity_key)
+    entity.update(updatedItem)
+
+    datastore_client.put(entity)
+
+
 
 def cors_configuration(bucket_name: str):
   """Set a bucket's CORS policies configuration."""
