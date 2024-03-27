@@ -1,7 +1,8 @@
-from fastapi import FastAPI
-from fastapi.responses import Response
+from fastapi import FastAPI, UploadFile, Form
+from fastapi.responses import Response, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-from src.utils import cors_configuration, APIModel, create_and_store_entity, get_all_entities, update_entity
+from src.utils import cors_configuration, APIModel, create_and_store_entity, get_all_entities, update_entity, upload_file
+import time
 
 
 app = FastAPI()
@@ -25,8 +26,18 @@ bucket_name = 'artifacts.proyecto-inicial-daniel.appspot.com'
 cors_configuration(bucket_name)
 
 
+# For testing purposes
+@app.get('/', response_class=HTMLResponse)
+def root():
+  return '<!DOCTYPE html>\n<meta name="color-scheme" content="dark">'
+
 @app.post('/api/send-data/')
-def send_data(item: APIModel):
+def send_data(photo_file: UploadFile, creation_date = Form(), name = Form(), dni = Form(), birth_date = Form()):
+  item = APIModel(creation_date=creation_date, name=name, dni=dni, birth_date=birth_date)
+
+  file_url = upload_file(f'photos/{time.time()}-{photo_file.filename}', photo_file)
+  item.photo_url = file_url
+
   create_and_store_entity(item)
 
   return item

@@ -1,6 +1,6 @@
+from fastapi import UploadFile
 from pydantic import BaseModel
 from google.cloud import storage, datastore
-# from google.cloud.datastore.query import PropertyFilter
 
 
 class APIModel(BaseModel):
@@ -8,6 +8,7 @@ class APIModel(BaseModel):
   name: str
   dni: str
   birth_date: str
+  photo_url: str | None = None
 
 database_name = 'registro'
 datastore_client = datastore.Client(database = database_name)
@@ -67,6 +68,26 @@ def cors_configuration(bucket_name: str):
   ]
 
   bucket.patch()
+
+def upload_file(blob_destination_name: str, upload_file: UploadFile):
+  storage_client = storage.Client()
+
+  bucket_name = 'proyecto-inicial-storage'
+  bucket = storage_client.get_bucket(bucket_name)
+
+  blob = bucket.blob(blob_destination_name)
+
+  blob.upload_from_file(
+    file_obj = upload_file.file,
+    content_type = upload_file.content_type
+  )
+
+  blob.make_public()
+
+  print('URL', blob.public_url)
+
+  return blob.public_url
+
 
 def is_value_in_object(value: str, object: dict[str, any]):
   values = list(dict.values(object))
