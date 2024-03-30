@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import Response, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-from src.utils import cors_configuration, APIModel, create_and_store_entity, get_all_entities, update_entity, upload_file
+from src.utils import cors_configuration, APIModel, create_and_store_entity, get_all_entities, update_entity, upload_file, insert_data_in_bigquery_table
 import time
 
 
@@ -38,7 +38,9 @@ def send_data(photo_file: UploadFile, creation_date = Form(), name = Form(), dni
   file_url = upload_file(f'photos/{time.time()}-{photo_file.filename}', photo_file)
   item.photo_url = file_url
 
-  create_and_store_entity(item)
+  entity = create_and_store_entity(item)
+
+  insert_data_in_bigquery_table(entity.key.id, item)
 
   return item
 
@@ -51,4 +53,7 @@ def get_all_data(filter: str | None = None):
 @app.post('/api/edit-data/{entity_key}', response_class = Response)
 def edit_data(entity_key: int, updatedItem: APIModel):
   update_entity(entity_key, updatedItem)
+
+  insert_data_in_bigquery_table(entity_key, updatedItem)
+
   return
