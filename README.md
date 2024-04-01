@@ -23,6 +23,8 @@ https://realpython.com/python-csv/
 https://www.tutorialspoint.com/how-to-convert-datetime-to-an-integer-in-python  
 https://stackoverflow.com/questions/522563/how-to-access-the-index-value-in-a-for-loop  
 https://stackoverflow.com/questions/24566630/convert-io-bytesio-to-io-stringio-to-parse-html-page  
+https://www.programiz.com/python-programming/methods/dictionary/items  
+https://stackoverflow.com/questions/11251709/check-if-item-is-in-an-array-list  
 
 
 

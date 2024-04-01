@@ -73,7 +73,12 @@ def get_all_entities(filterValue: str | None = None):
   entities: list[APIModel] = list(query.fetch())
 
   if filterValue != None:
-    entities = list(filter(lambda object: is_value_in_object(filterValue, object), entities))
+    entities = list(
+      filter(
+        lambda object: is_value_in_object(filterValue, object, ['creation_date', 'birth_date', 'photo_url']),
+        entities
+      )
+    )
 
   # Add the entity key to each item to be able to refer to it and update it on the front-end
   for entity in entities:
@@ -157,13 +162,13 @@ def upload_file(blob_destination_name: str, upload_file: UploadFile):
   return blob.public_url
 
 
-def is_value_in_object(value: str, object: dict[str, any]):
-  values = list(dict.values(object))
+def is_value_in_object(value: str, object: dict[str, any], ignore_keys: list[str] | None = None):
+  key_value_pairs = list(dict.items(object))
 
-  if len(values) == 0:
-    return False
+  for key, item in key_value_pairs:
+    if ignore_keys != None and key in ignore_keys:
+      continue
 
-  for item in values:
     if value.lower() in str(item).lower():
       return True
 
