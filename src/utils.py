@@ -6,6 +6,7 @@ import csv
 import time
 import datetime
 import math
+import io
 
 
 class APIModel(BaseModel):
@@ -91,7 +92,10 @@ def update_entity(key: int, updatedItem: APIModel):
     datastore_client.put(entity)
 
 def store_entities_from_csv(csv_file: UploadFile):
-  reader = csv.DictReader(csv_file.file, delimiter=',')
+  # Transform the binary file into a text file for the csv reader
+  text_file = io.TextIOWrapper(csv_file.file, encoding='utf-8')
+
+  reader = csv.DictReader(text_file, delimiter=',')
 
   data: list[APIModel] = []
 
