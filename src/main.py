@@ -52,9 +52,15 @@ def get_all_data(filter: str | None = None):
   return result
 
 @app.post('/api/edit-data/{entity_key}', response_class = Response)
-def edit_data(entity_key: int, updatedItem: APIModel):
-  update_entity(entity_key, updatedItem)
+def edit_data(entity_key: int, photo_file: UploadFile, creation_date = Form(), name = Form(), dni = Form(), birth_date = Form()):
+  updated_item = APIModel(creation_date=creation_date, name=name, dni=dni, birth_date=birth_date)
 
-  insert_data_in_bigquery_table(entity_key, updatedItem)
+  if photo_file.size != 0:
+    file_url = upload_file(f'photos/{time.time()}-{photo_file.filename}', photo_file)
+    updated_item.photo_url = file_url
+
+  update_entity(entity_key, updated_item)
+
+  insert_data_in_bigquery_table(entity_key, updated_item)
 
   return
