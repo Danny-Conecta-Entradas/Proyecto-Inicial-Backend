@@ -67,6 +67,7 @@ def get_all_entities(filterValue: str | None = None):
   datastore_client = get_datastore_client()
 
   query = datastore_client.query(kind = APIModel.__name__)
+  query.order = ['-creation_date']
 
   entities: list[APIModel] = list(query.fetch())
 
