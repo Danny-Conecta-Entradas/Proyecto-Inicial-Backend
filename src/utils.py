@@ -2,12 +2,17 @@ from fastapi import UploadFile
 from pydantic import BaseModel
 from google.cloud import storage, datastore, bigquery
 from google.cloud.bigquery import SchemaField
+import csv
+import time
+import datetime
+import math
+
 
 class APIModel(BaseModel):
-  creation_date: str
+  creation_date: int
   name: str
   dni: str
-  birth_date: str
+  birth_date: int | str
   photo_url: str | None = None
 
 
@@ -18,19 +23,45 @@ def get_datastore_client():
   return datastore_client
 
 
-def create_and_store_entity(form_data: APIModel):
+def create_entity(form_data: APIModel):
   datastore_client = get_datastore_client()
 
   kind = APIModel.__name__
   form_key = datastore_client.key(kind)
 
-  form_entity = datastore.Entity(key = form_key)
-  form_entity.update(form_data)
+  entity = datastore.Entity(key = form_key)
+  entity.update(form_data)
 
-  datastore_client.put(form_entity)
+  return entity
 
-  return form_entity
+def store_entity(entity: datastore.Entity):
+  datastore_client = get_datastore_client()
+  datastore_client.put(entity)
 
+def create_and_store_entity(form_data: APIModel):
+  entity = create_entity(form_data)
+  store_entity(entity)
+
+  return entity
+
+def create_multiple_entities(data: list[APIModel]) -> list[datastore.Entity]:
+  entities = []
+
+  for item in data:
+    entity = create_entity(item)
+    entities.append(entity)
+
+  return entities
+
+def store_multiple_entities(entities: list[datastore.Entity]):
+  datastore_client = get_datastore_client()
+  datastore_client.put_multi(entities)
+
+def create_and_store_multiple_entities(data: list[APIModel]):
+  entities = create_multiple_entities(data)
+  store_multiple_entities(entities)
+
+  return entities
 
 def get_all_entities(filterValue: str | None = None):
   datastore_client = get_datastore_client()
@@ -58,6 +89,27 @@ def update_entity(key: int, updatedItem: APIModel):
 
     datastore_client.put(entity)
 
+def store_entities_from_csv(csv_file: UploadFile):
+  reader = csv.DictReader(csv_file.file, delimiter=',')
+
+  data: list[APIModel] = []
+
+  for row in reader:
+    creation_date = get_current_date_in_miliseconds()
+    item = APIModel(creation_date=creation_date, **row)
+
+    # If the date is in `string` format (e.g. comes from a CSV)
+    # then transform it into `int` value
+    if type(item.birth_date) == str:
+      item.birth_date = get_formatted_date_as_miliseconds(item.birth_date, '%Y-%m-%d')
+
+    data.append(item)
+
+    print(item)
+
+  entities = create_and_store_multiple_entities(data)
+
+  return (entities, data)
 
 
 def cors_configuration(bucket_name: str):
@@ -152,11 +204,32 @@ def get_bigquery_table():
 
   return table
 
-def insert_data_in_bigquery_table(id: int, data: APIModel):
+def insert_data_in_bigquery_table(entities_or_entities_id: list[datastore.Entity] | list[int], data: list[APIModel]):
   bigquery_client = bigquery.Client()
   table = get_bigquery_table()
 
-  data_dump = data.model_dump()
-  data_dump['_key'] = id
+  data_dump_list = []
 
-  bigquery_client.insert_rows_json(table, [data_dump])
+  for index, item in enumerate(data):
+    entity_or_entity_id = entities_or_entities_id[index]
+
+    data_dump = item.model_dump()
+
+    if type(entity_or_entity_id) == int:
+      data_dump['_key'] = entity_or_entity_id
+    else:
+      data_dump['_key'] = entity_or_entity_id.key.id
+
+    data_dump_list.append(data_dump)
+
+  bigquery_client.insert_rows_json(table, data_dump_list)
+
+# Get current date in miliseconds to match JavaScript `Date.now()` format
+def get_current_date_in_miliseconds():
+  return math.floor(time.time() * 1000)
+
+def get_formatted_date_as_miliseconds(string_date: str, format: str):
+  datetime_object = datetime.datetime.strptime(string_date, format)
+  date_int =  math.floor(datetime_object.timestamp() * 1000)
+
+  return date_int

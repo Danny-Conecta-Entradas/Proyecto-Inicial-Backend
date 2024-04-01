@@ -18,6 +18,10 @@ https://stackoverflow.com/questions/40417502/insert-a-row-in-to-google-bigquery-
 https://youtube.com/watch?v=JjBQ1qM84FM?list=PL3JVwFmb_BnRKqcbtl2hHL5GIQOHX-sC5&t=316s  
 https://stackoverflow.com/questions/48684613/how-to-update-delete-rows-in-bigquery-from-the-python-api  
 https://stackoverflow.com/questions/48177241/google-bq-how-to-upsert-existing-data-in-tables/48177344#48177344  
+https://stackoverflow.com/questions/71331496/object-assign-equivalent-in-python  
+https://realpython.com/python-csv/  
+https://www.tutorialspoint.com/how-to-convert-datetime-to-an-integer-in-python  
+https://stackoverflow.com/questions/522563/how-to-access-the-index-value-in-a-for-loop  
 
 
 

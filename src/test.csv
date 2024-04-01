@@ -1,0 +1,4 @@
+name,dni,birth_date,photo_url
+Test CSV 1,123456789A,2000-11-11,https://storage.googleapis.com/proyecto-inicial-storage/photos/1711960459.7019293-Windows%2010%20Oscuro.jpg
+Test CSV 2,123456789A,2000-03-22,
+Test CSV 3,123456789A,2000-3-29,https://storage.googleapis.com/proyecto-inicial-storage/photos/1711960459.7019293-Windows%2010%20Oscuro.jpg
