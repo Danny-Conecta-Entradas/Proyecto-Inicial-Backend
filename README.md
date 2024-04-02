@@ -25,6 +25,9 @@ https://stackoverflow.com/questions/522563/how-to-access-the-index-value-in-a-fo
 https://stackoverflow.com/questions/24566630/convert-io-bytesio-to-io-stringio-to-parse-html-page  
 https://www.programiz.com/python-programming/methods/dictionary/items  
 https://stackoverflow.com/questions/11251709/check-if-item-is-in-an-array-list  
+https://stackoverflow.com/questions/152580/whats-the-canonical-way-to-check-for-type-in-python  
+https://docs.python.org/3/tutorial/errors.html  
+https://github.com/googleapis/google-cloud-go/issues/975
 
 
 

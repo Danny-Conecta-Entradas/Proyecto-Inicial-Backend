@@ -51,7 +51,9 @@ def send_data_csv(csv_file: UploadFile):
 
   try:
     (entities, data) = store_entities_from_csv(csv_file)
-  except:
+  except Exception as reason:
+    print(reason)
+
     return Response(status_code=400)
 
   insert_data_in_bigquery_table(entities, data)

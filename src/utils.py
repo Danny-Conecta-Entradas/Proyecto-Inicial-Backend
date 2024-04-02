@@ -30,6 +30,8 @@ def create_entity(form_data: APIModel):
   kind = APIModel.__name__
   form_key = datastore_client.key(kind)
 
+  form_data.birth_date = int(form_data.birth_date)
+
   entity = datastore.Entity(key = form_key)
   entity.update(form_data)
 
@@ -203,14 +205,17 @@ def get_bigquery_table():
     table.schema = [
       # https://cloud.google.com/bigquery/docs/reference/rest/v2/tables#TableFieldSchema.FIELDS.mode
       SchemaField('_key', 'INTEGER', mode='REQUIRED'),
-      SchemaField('creation_date', 'STRING', mode='REQUIRED'),
+      SchemaField('creation_date', 'INTEGER', mode='REQUIRED'),
       SchemaField('name', 'STRING', mode='REQUIRED'),
       SchemaField('dni', 'STRING', mode='REQUIRED'),
-      SchemaField('birth_date', 'STRING', mode='REQUIRED'),
+      SchemaField('birth_date', 'INTEGER', mode='REQUIRED'),
       SchemaField('photo_url', 'STRING', mode='REQUIRED'),
     ]
 
     table = bigquery_client.update_table(table, ['schema'])
+
+    # Add a small delay to avoid `NOT_FOUND Table` error when inserting data after creating the table
+    time.sleep(1)
 
   return table
 
@@ -225,7 +230,7 @@ def insert_data_in_bigquery_table(entities_or_entities_id: list[datastore.Entity
 
     data_dump = item.model_dump()
 
-    if type(entity_or_entity_id) == int:
+    if type(entity_or_entity_id) is int:
       data_dump['_key'] = entity_or_entity_id
     else:
       data_dump['_key'] = entity_or_entity_id.key.id
