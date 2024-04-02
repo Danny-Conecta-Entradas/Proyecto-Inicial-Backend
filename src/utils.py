@@ -88,13 +88,28 @@ def get_all_entities(filterValue: str | None = None):
 
   return entities
 
-def update_entity(key: int, updatedItem: APIModel):
+def update_entity(key: int, updated_item: APIModel):
   datastore_client = get_datastore_client()
+
+  updated_item.birth_date = int(updated_item.birth_date)
 
   with datastore_client.transaction():
     entity_key = datastore_client.key(APIModel.__name__, key)
     entity = datastore_client.get(entity_key)
-    entity.update(updatedItem)
+
+    data_dump =  None
+
+    exclude_keys = []
+
+    if type(updated_item.birth_date) is not int:
+      exclude_keys.append('birth_date')
+
+    if type(updated_item.photo_url) is not str:
+      exclude_keys.append('photo_url')
+
+    data_dump = updated_item.model_dump(exclude=exclude_keys)
+
+    entity.update(data_dump)
 
     datastore_client.put(entity)
 
