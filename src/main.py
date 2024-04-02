@@ -47,7 +47,13 @@ def send_data(photo_file: UploadFile, creation_date = Form(), name = Form(), dni
 
 @app.post('/api/send-data-csv/')
 def send_data_csv(csv_file: UploadFile):
-  (entities, data) = store_entities_from_csv(csv_file)
+  (entities, data) = (None, None)
+
+  try:
+    (entities, data) = store_entities_from_csv(csv_file)
+  except:
+    return Response(status_code=400)
+
   insert_data_in_bigquery_table(entities, data)
 
   return
