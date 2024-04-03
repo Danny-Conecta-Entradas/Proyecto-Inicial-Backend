@@ -113,6 +113,15 @@ def update_entity(key: int, updated_item: APIModel):
 
     datastore_client.put(entity)
 
+def delete_entity(entity_id: int):
+  datastore_client = get_datastore_client()
+
+  entity_key = datastore_client.key(APIModel.__name__, entity_id)
+
+  datastore_client.delete(entity_key)
+
+  return
+
 def store_entities_from_csv(csv_file: UploadFile):
   # Transform the binary file into a text file for the csv reader
   text_file = io.TextIOWrapper(csv_file.file, encoding='utf-8')

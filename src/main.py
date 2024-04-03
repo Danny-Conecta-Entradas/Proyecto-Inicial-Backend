@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.responses import Response, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-from src.utils import cors_configuration, APIModel, create_and_store_entity, get_all_entities, update_entity, upload_file, insert_data_in_bigquery_table, store_entities_from_csv
+from src.utils import cors_configuration, APIModel, create_and_store_entity, get_all_entities, update_entity, delete_entity, upload_file, insert_data_in_bigquery_table, store_entities_from_csv
 import time
 
 
@@ -66,16 +66,22 @@ def get_all_data(filter: str | None = None):
 
   return result
 
-@app.post('/api/edit-data/{entity_key}', response_class = Response)
-def edit_data(entity_key: int, photo_file: UploadFile, creation_date = Form(), name = Form(), dni = Form(), birth_date = Form()):
+@app.post('/api/edit-data/{entity_id}', response_class = Response)
+def edit_data(entity_id: int, photo_file: UploadFile, creation_date = Form(), name = Form(), dni = Form(), birth_date = Form()):
   updated_item = APIModel(creation_date=creation_date, name=name, dni=dni, birth_date=birth_date)
 
   if photo_file.size != 0:
     file_url = upload_file(f'photos/{time.time()}-{photo_file.filename}', photo_file)
     updated_item.photo_url = file_url
 
-  update_entity(entity_key, updated_item)
+  update_entity(entity_id, updated_item)
 
-  insert_data_in_bigquery_table([entity_key], [updated_item])
+  insert_data_in_bigquery_table([entity_id], [updated_item])
+
+  return
+
+@app.post('/api/delete-data/{entity_id}', response_class=Response)
+def delete_data(entity_id: int):
+  delete_entity(entity_id)
 
   return
