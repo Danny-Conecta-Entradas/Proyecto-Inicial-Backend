@@ -7,6 +7,7 @@ import time
 import datetime
 import math
 import io
+import re
 
 
 class APIModel(BaseModel):
@@ -130,8 +131,31 @@ def store_entities_from_csv(csv_file: UploadFile):
 
   data: list[APIModel] = []
 
-  for row in reader:
+  for index, row in enumerate(reader):
     creation_date = get_current_date_in_miliseconds()
+
+    csv_line = index + 2
+
+    if row['name'] == '':
+      raise Exception('empty-name', f'CSV "name" field cannot be empty. Line {csv_line}.')
+
+    if len(row['name']) > 30:
+      raise Exception('invalid-name', f'CSV "name" field cannot greater than 30 characters. Line {csv_line}.')
+
+    if row['dni'] == '':
+      raise Exception('empty-dni', f'CSV "dni" field cannot be empty. Line {csv_line}.')
+
+    dni_regexp = r'^[1-9]{8,8}[A-Z]$'
+    if re.match(string=row['dni'], pattern=dni_regexp) == None:
+      raise Exception('invalid-dni', f'CSV "dni" field must follow the format "12345678A". Line {csv_line}.')
+
+    if row['birth_date'] == '':
+      raise Exception('empty-birth_date', f'CSV "birth_date" field cannot be empty. Line {csv_line}.')
+
+    birth_date_regexp = r'^[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}$'
+    if re.match(string=row['birth_date'], pattern=birth_date_regexp) == None:
+      raise Exception('invalid-birth_date', f'CSV "birth_date" field must follow the format "yyyy-mm-dd". Line {csv_line}.')
+
     item = APIModel(creation_date=creation_date, **row)
 
     # If the date is in `string` format (e.g. comes from a CSV)

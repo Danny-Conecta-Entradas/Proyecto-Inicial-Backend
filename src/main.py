@@ -1,5 +1,5 @@
 from fastapi import FastAPI, UploadFile, Form
-from fastapi.responses import Response, HTMLResponse
+from fastapi.responses import Response, HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from src.utils import cors_configuration, APIModel, create_and_store_entity, get_all_entities, update_entity, delete_entity, upload_file, insert_data_in_bigquery_table, store_entities_from_csv
 import time
@@ -54,7 +54,11 @@ def send_data_csv(csv_file: UploadFile):
   except Exception as reason:
     print(reason)
 
-    return Response(status_code=400)
+    (code, message) = reason.args
+
+    error_message = {'code': code, 'message': message}
+
+    return JSONResponse(status_code=400, content=error_message)
 
   insert_data_in_bigquery_table(entities, data)
 
