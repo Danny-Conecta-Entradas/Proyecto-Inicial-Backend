@@ -7,9 +7,8 @@ import time
 
 app = FastAPI()
 
-# Not working
 # origins = [
-#   'https://proyecto-inicial-frontend-agk6kyxhfa-no.a.run.app/',
+#   'https://proyecto-inicial-frontend-agk6kyxhfa-no.a.run.app',
 # ]
 
 app.add_middleware(
@@ -32,10 +31,10 @@ def root():
   return '<!DOCTYPE html>\n<meta name="color-scheme" content="dark">'
 
 @app.post('/api/send-data/')
-def send_data(photo_file: UploadFile, creation_date = Form(), name = Form(), dni = Form(), birth_date = Form()):
+def send_data(photo_file: UploadFile | None = None, creation_date = Form(), name = Form(), dni = Form(), birth_date = Form()):
   item = APIModel(creation_date=creation_date, name=name, dni=dni, birth_date=birth_date)
 
-  if photo_file.size != 0:
+  if photo_file != None and photo_file.size != 0:
     file_url = upload_file(f'photos/{time.time()}-{photo_file.filename}', photo_file)
     item.photo_url = file_url
 
