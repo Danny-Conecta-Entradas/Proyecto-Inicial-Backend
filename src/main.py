@@ -1,7 +1,21 @@
-from fastapi import FastAPI, UploadFile, Form
-from fastapi.responses import Response, HTMLResponse, JSONResponse
+from fastapi import (
+  FastAPI, UploadFile, Form,
+)
+from fastapi.responses import (
+  Response, HTMLResponse, JSONResponse,
+)
 from fastapi.middleware.cors import CORSMiddleware
-from src.utils import cors_configuration, APIModel, create_and_store_entity, get_all_entities, update_entity, delete_entity, upload_file, insert_data_in_bigquery_table, store_entities_from_csv
+from src.utils import (
+  cors_configuration,
+  APIModel,
+  create_and_store_entity,
+  get_all_entities,
+  update_entity,
+  delete_entity,
+  upload_file,
+  insert_data_in_bigquery_table,
+  store_entities_from_csv,
+)
 import time
 
 

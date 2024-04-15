@@ -1,7 +1,11 @@
 from fastapi import UploadFile
 from pydantic import BaseModel
-from google.cloud import storage, datastore, bigquery
-from google.cloud.bigquery import SchemaField
+from google.cloud import (
+  storage, datastore, bigquery,
+)
+from google.cloud.bigquery import (
+  SchemaField
+)
 import csv
 import time
 import datetime
