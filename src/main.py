@@ -48,7 +48,7 @@ def root():
 def send_data(photo_file: UploadFile | None = None, creation_date = Form(), name = Form(), dni = Form(), birth_date = Form()):
   item = APIModel(creation_date=creation_date, name=name, dni=dni, birth_date=birth_date)
 
-  if photo_file != None and photo_file.size != 0:
+  if photo_file is not None and photo_file.size != 0:
     file_url = upload_file(f'photos/{time.time()}-{photo_file.filename}', photo_file)
     item.photo_url = file_url
 

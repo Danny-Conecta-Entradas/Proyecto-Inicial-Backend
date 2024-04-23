@@ -79,7 +79,7 @@ def get_all_entities(filterValue: str | None = None):
 
   entities: list[APIModel] = list(query.fetch())
 
-  if filterValue != None:
+  if filterValue is not None:
     entities = list(
       filter(
         lambda object: is_value_in_object(filterValue, object, ['creation_date', 'birth_date', 'photo_url']),
@@ -106,10 +106,10 @@ def update_entity(key: int, updated_item: APIModel):
 
     exclude_keys = []
 
-    if type(updated_item.birth_date) is not int:
+    if not isinstance(updated_item.birth_date, int):
       exclude_keys.append('birth_date')
 
-    if type(updated_item.photo_url) is not str:
+    if not isinstance(updated_item.photo_url, str):
       exclude_keys.append('photo_url')
 
     data_dump = updated_item.model_dump(exclude=exclude_keys)
@@ -150,21 +150,21 @@ def store_entities_from_csv(csv_file: UploadFile):
       raise Exception('empty-dni', f'CSV "dni" field cannot be empty. Line {csv_line}.')
 
     dni_regexp = r'^[1-9]{8,8}[A-Z]$'
-    if re.match(string=row['dni'], pattern=dni_regexp) == None:
+    if re.match(string=row['dni'], pattern=dni_regexp) is None:
       raise Exception('invalid-dni', f'CSV "dni" field must follow the format "12345678A". Line {csv_line}.')
 
     if row['birth_date'] == '':
       raise Exception('empty-birth_date', f'CSV "birth_date" field cannot be empty. Line {csv_line}.')
 
     birth_date_regexp = r'^[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}$'
-    if re.match(string=row['birth_date'], pattern=birth_date_regexp) == None:
+    if re.match(string=row['birth_date'], pattern=birth_date_regexp) is None:
       raise Exception('invalid-birth_date', f'CSV "birth_date" field must follow the format "yyyy-mm-dd". Line {csv_line}.')
 
     item = APIModel(creation_date=creation_date, **row)
 
     # If the date is in `string` format (e.g. comes from a CSV)
     # then transform it into `int` value
-    if type(item.birth_date) == str:
+    if isinstance(item.birth_date, str):
       item.birth_date = get_formatted_date_as_miliseconds(item.birth_date, '%Y-%m-%d')
 
     data.append(item)
@@ -220,7 +220,7 @@ def is_value_in_object(value: str, object: dict[str, any], ignore_keys: list[str
   key_value_pairs = list(dict.items(object))
 
   for key, item in key_value_pairs:
-    if ignore_keys != None and key in ignore_keys:
+    if ignore_keys is not None and key in ignore_keys:
       continue
 
     if value.lower() in str(item).lower():
@@ -236,7 +236,7 @@ def get_bigquery_dataset():
 
   try:
     dataset = bigquery_client.get_dataset(dataset_name)
-  except:
+  except Exception:
     dataset = bigquery_client.create_dataset(dataset_name)
 
   return dataset
@@ -252,7 +252,7 @@ def get_bigquery_table():
 
   try:
     table = bigquery_client.get_table(table_name)
-  except:
+  except Exception:
     table = bigquery_client.create_table(table_name)
     table.schema = [
       # https://cloud.google.com/bigquery/docs/reference/rest/v2/tables#TableFieldSchema.FIELDS.mode
@@ -282,7 +282,7 @@ def insert_data_in_bigquery_table(entities_or_entities_id: list[datastore.Entity
 
     data_dump = item.model_dump()
 
-    if type(entity_or_entity_id) is int:
+    if isinstance(entity_or_entity_id, int):
       data_dump['_key'] = entity_or_entity_id
     else:
       data_dump['_key'] = entity_or_entity_id.key.id
